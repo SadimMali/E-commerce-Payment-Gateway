@@ -1,4 +1,4 @@
-export interface Products {
+export interface Product {
   id: number;
   category: string;
   subCategory: string;
@@ -13,11 +13,11 @@ export interface Products {
   releaseDate: string;
 }
 
-export const PRODUCTS: Array<Products> = [
+export const PRODUCTS: Array<Product> = [
   {
     id: 1,
     category: "sneaker",
-    subCategory: "jordon",
+    subCategory: "jordan",
     description:
       "Jordan Brand connected with Parisian fashion house Dior to create history with the Jordan 1 Retro High Dior, now available on store. This is the first time that Jordan has collaborated with a legacy fashion label like Dior, making this release one for the books. This release was limited to only 8,500 pairs, each pair individually numbered.",
     img: "/product/afdior.jpg",
@@ -32,7 +32,7 @@ export const PRODUCTS: Array<Products> = [
   {
     id: 2,
     category: "sneaker",
-    subCategory: "jordon",
+    subCategory: "jordan",
     description:
       "Jordan Brand connected with Parisian fashion house Dior to create history with the Jordan 1 Retro Low Dior, now available on store. This is the first time that Jordan has collaborated with a legacy fashion label like Dior, making this release one for the books. This release was limited to only 4,700 pairs, each pair individually numbered",
     img: "/product/afdiorlow.jpg",
@@ -47,7 +47,7 @@ export const PRODUCTS: Array<Products> = [
   {
     id: 3,
     category: "sneaker",
-    subCategory: "jordon",
+    subCategory: "jordan",
     description:
       "Nike and Jordan Brand are returning back to the Spider-Verse for their second Spider-Man themed Air Jordan 1, with the release of the Air Jordan 1 High OG Spider-Man Across the Spider-Verse.",
     img: "/product/afspid.jpg",
@@ -78,7 +78,7 @@ export const PRODUCTS: Array<Products> = [
   {
     id: 5,
     category: "sneaker",
-    subCategory: "jordon",
+    subCategory: "jordan",
     description:
       "Turn style on its head with this crafted take on the Air Jordan 1 Mid. Its 'inside out'-inspired construction, including unique layering and exposed foam accents, ups the ante on this timeless Jordan Brand silhouette. ",
     img: "/product/airflv.jpg",
@@ -306,11 +306,27 @@ export const PRODUCTS: Array<Products> = [
   },
 ];
 
+export const CATEGORY_FILTERS = [
+  { id: 1, name: "all" },
+  { id: 2, name: "sneaker" },
+  { id: 3, name: "allclothing" },
+  { id: 4, name: "accessories" },
+  { id: 12, name: "airforce" },
+  { id: 11, name: "jordan" },
+  { id: 10, name: "dunks" },
+  { id: 13, name: "short" },
+  { id: 5, name: "tshirt" },
+  { id: 6, name: "backpack" },
+  { id: 7, name: "sunglass" },
+  { id: 8, name: "jacket" },
+  { id: 9, name: "bottle" },
+];
+
 // Fn to generate random products
 export function getRandomProduct(
-  products: Array<Products>,
+  products: Array<Product>,
   count: number
-): Array<Products> {
+): Array<Product> {
   const randomProduct = products.sort(() => 0.5 - Math.random());
 
   return randomProduct.slice(0, count);
