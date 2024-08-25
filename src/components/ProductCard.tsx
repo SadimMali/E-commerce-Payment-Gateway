@@ -8,7 +8,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ item }: ProductCardProps) => {
   return (
-    <Card className="h-full border-0">
+    <Card className="h-full border-2 rounded-none border-gray-100 transition-all  hover:border-black">
     <CardContent className="flex flex-col justify-center p-0">
       <div className="flex items-center justify-center h-80 w-full bg-gray-100">
         <img src={item.img} className="h-full object-contain" alt={item.name} />
