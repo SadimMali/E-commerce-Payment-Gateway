@@ -1,10 +1,19 @@
-import  UserModel  from "@/model/User.model";
+import { dbConnect } from "@/lib/dbConnector";
+import UserModel from "@/model/User.model";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
-  const { username, email, password, firstName, lastName, location } =
-    await req.json();
+  await dbConnect();
   try {
+    const {
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+      location,
+      phone_number,
+    } = await req.json();
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
       return Response.json(
@@ -19,13 +28,14 @@ export async function POST(req: Request) {
       username,
       first_name: firstName,
       last_name: lastName,
+      phone_number,
+      location,
       email,
       password: hashedPassword,
-      location,
     });
     await newUser.save();
 
-    Response.json(
+    return Response.json(
       {
         success: true,
         message: "User created successfully",
@@ -34,12 +44,12 @@ export async function POST(req: Request) {
     );
   } catch (err) {
     console.log(err);
+    return Response.json(
+      {
+        success: false,
+        message: "Error registering user",
+      },
+      { status: 500 }
+    );
   }
-
-  return Response.json(
-    {
-      sucess: true,
-    },
-    { status: 200 }
-  );
 }
