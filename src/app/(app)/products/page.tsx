@@ -36,6 +36,7 @@ const Page = () => {
   return (
     <main>
       <MaxWidthWrapper>
+          <h3 className="font-semibold text-3xl mt-2 text-center uppercase">{category}</h3>
         {/* filter */}
         <div className="py-5 md:py-10 flex gap-4 flex-wrap">
           {CATEGORY_FILTERS.map((filter) => (
