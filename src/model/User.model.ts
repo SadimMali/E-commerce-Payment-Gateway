@@ -5,29 +5,33 @@ interface User extends Document {
   first_name: string;
   last_name: string;
   phone_number: number;
-  location: string;
   email: string;
+  verifyCode: string;
+  isVerified: boolean;
+  location: string;
+  verifyCodeExpiryDate: Date;
   password: string;
 }
 
 const UserSchema: Schema<User> = new Schema({
   username: {
     type: String,
-    required: [true, "Username is required"],
+    // required: [true, "Username is required"],
     trim: true,
     unique: true,
   },
   first_name: {
     type: String,
-    required: [true, "First name is required"],
+    // required: [true, "First name is required"],
   },
   last_name: {
     type: String,
-    required: [true, "Last name is required"],
+    // required: [true, "Last name is required"],
   },
   phone_number: {
     type: Number,
-    required: [true, "Phone number is required"],
+    maxlength: 10,
+    // required: [true, "Phone number is required"],
   },
   email: {
     type: String,
@@ -35,14 +39,26 @@ const UserSchema: Schema<User> = new Schema({
     unique: true,
     match: [/.+\@.+\..+/, "Please use a valid email address"],
   },
+  verifyCode: {
+    type: String,
+    required: true,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
+  verifyCodeExpiryDate: {
+    type: Date,
+    required: true,
+  },
   password: {
     type: String,
-    required: [true, "Password is required"],
+    // required: [true, "Password is required"],
   },
-
   location: {
     type: String,
-    required: [true, "Location is required"],
+    // required: [true, "Password is required"],
   },
 });
 
