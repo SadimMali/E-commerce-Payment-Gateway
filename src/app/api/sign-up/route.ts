@@ -6,6 +6,7 @@ export async function POST(req: Request) {
   await dbConnect();
   try {
     const {
+      verifyCode,
       username,
       email,
       password,
@@ -15,30 +16,44 @@ export async function POST(req: Request) {
       phone_number,
     } = await req.json();
     const existingUser = await UserModel.findOne({ email });
-    if (existingUser) {
+    if (!existingUser) {
       return Response.json(
-        { success: false, message: "User already exist with this email" },
-        { status: 401 }
+        { success: false, message: "User not found" },
+        { status: 404 }
       );
+    }
+    
+    if(existingUser.verifyCode !== verifyCode){
+      return Response.json(
+        { success: false, message: "Invalid verification code" },
+        { status: 400 }
+      );
+      
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
-
-    const newUser = new UserModel({
-      username,
-      first_name: firstName,
-      last_name: lastName,
-      phone_number,
-      location,
-      email,
-      password: hashedPassword,
-    });
-    await newUser.save();
-
+    const updatedUser = await UserModel.findOneAndUpdate(
+      {
+        email,
+        verifyCode,
+      },
+      {
+        $set: {
+          username,
+          first_name: firstName,
+          last_name: lastName,
+          phone_number,
+          password: hashedPassword,
+          location,
+          isVerified: true,
+        },
+      },
+      { new: true }
+    );
     return Response.json(
       {
         success: true,
-        message: "User created successfully",
+        message: "User created and verified successfully",
       },
       { status: 201 }
     );
