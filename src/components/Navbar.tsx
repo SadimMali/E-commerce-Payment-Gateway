@@ -1,10 +1,22 @@
-import React from "react";
+"use client"
+import React, { useContext } from "react";
 import MaxWidthWraper from "./MaxWidthWrapper";
 import { Heart, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { CartContext } from "@/context/CartContext";
 
 const Navbar = () => {
-  let cart = []; // Dynamic render the cart item;
+  const cartContext = useContext(CartContext);
+  if(!cartContext) {
+   return  <div>loading</div>
+  }
+  const {cart} = cartContext
+
+  const quantity = cart.reduce((acc, element)=> {
+    return acc + element.quantity
+  }, 0)
+  
+  const wish = [];
   const isUser = false;
   return (
     <nav className=" sticky z-[100] inset-x-0 w-full top-0 h-14 border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
@@ -14,19 +26,22 @@ const Navbar = () => {
             <span>E.com</span>
           </Link>
           <div className="flex items-center justify-between gap-5">
+            <Link href='/cart'>
             <button className="relative">
               <ShoppingCart className="h-6 w-6" />
               {cart.length > 0 && (
                 <span className="absolute flex items-center justify-center text-xs font-semibold w-4 h-4 p-2 border-2 rounded-full border-red-600 -right-4 -top-3">
-                  {cart.length}
+                  {quantity}
                 </span>
               )}
             </button>
+            </Link>
+
             <button className="relative">
               <Heart className="h-6 w-6" />
-              {cart.length > 0 && ( //TODO: : Change to whislist
+              {wish.length > 0 && ( //TODO: : Change to whislist
                 <span className="absolute flex items-center justify-center text-xs font-semibold w-4 h-4 p-2 border-2 rounded-full border-red-600 -right-4 -top-3">
-                  {cart.length}
+                  {wish.length}
                 </span>
               )}
             </button>
