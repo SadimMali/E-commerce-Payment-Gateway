@@ -1,16 +1,20 @@
 "use client";
 
+import { useToast } from "@/components/hooks/use-toast";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import {  CartContext } from "@/context/CartContext";
+import type {  Cart } from "@/context/CartContext";
 import { Product, PRODUCTS } from "@/utils/products";
 import { Car, Heart, ShoppingBag, Star } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 const page = () => {
   type Params = {
     id: string;
   };
   const params: Params = useParams();
+  const {toast} = useToast()
 
   const productId: number = parseInt(params.id, 10); //radix 10
 
@@ -26,6 +30,74 @@ const page = () => {
     const target = e.target as HTMLImageElement;
     setImage(target.src);
   };
+
+  const cartContext = useContext(CartContext);
+  
+  if (!cartContext) {
+    // Handle the case when cartContext is null
+    return <div>Loading...</div>;
+  }
+  const { setCart } = cartContext;
+
+  //Add cart
+//   const handleAddCart = () => {
+//     if (!filterProduct) return;
+// console.log('click')
+//     setCart((prevCart) => {
+//         const existingItemIndex = prevCart.findIndex(
+//             (item) => item.id === filterProduct.id
+//         );
+
+//         if (existingItemIndex >= 0) {
+//             // If item exists, update the quantity
+//             const updatedCart = [...prevCart];
+//             updatedCart[existingItemIndex].quantity += 1;
+//             console.log("updated", updatedCart);
+//             return updatedCart;
+//         } else {
+//             // Add product to cart with a default quantity of 1
+//             const newCartItem: Cart = { ...filterProduct, quantity: 1 };
+//             return [...prevCart, newCartItem];
+//         }
+//     });
+
+//     toast({
+//         title: "Add product to cart",
+//         description: "Product added to cart successfully",
+//     });
+// };
+
+const handleAddCart = () => {
+  if (!filterProduct) return;
+
+  setCart((prevCart) => {
+    const existingItemIndex = prevCart.findIndex(
+      (item) => item.id === filterProduct.id
+    );
+
+    if (existingItemIndex >= 0) {
+      // If item exists, update the quantity
+      const updatedCart = prevCart.map((item, index) =>
+        index === existingItemIndex
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+      console.log("updated", updatedCart);
+      return updatedCart;
+    } else {
+      // Add product to cart with a default quantity of 1
+      const newCartItem: Cart = { ...filterProduct, quantity: 1 };
+      return [...prevCart, newCartItem];
+    }
+  });
+
+  toast({
+    title: "Add product to cart",
+    description: "Product added to cart successfully",
+  });
+};
+
+  
   return (
     <main className="w-full h-full">
       <MaxWidthWrapper>
@@ -50,7 +122,10 @@ const page = () => {
                   {filterProduct?.description}{" "}
                 </p>
                 <p className="mb-1 text-sm lg:text-base">
-                               <span className="font-semibold">Release Date:</span> <span className="text-black">{filterProduct?.releaseDate || 'N/A'}</span>
+                  <span className="font-semibold">Release Date:</span>{" "}
+                  <span className="text-black">
+                    {filterProduct?.releaseDate || "N/A"}
+                  </span>
                 </p>
               </div>
             </div>
@@ -98,7 +173,7 @@ const page = () => {
               />
               {filterProduct?.otherImgs.map((img, x) => (
                 <img
-                  key={x}
+                  key={img}
                   src={img}
                   className="w-20 h-20 border hover:border-black cursor-pointer transition-shadow"
                   onMouseOver={handleImageChange}
@@ -108,7 +183,10 @@ const page = () => {
             </div>
             {/* cta buttons */}
             <div className="w-full flex gap-3 my-3">
-              <button className="w-10/12  py-3 bg-black rounded-md text-white text-sm font-semibold hover:opacity-70 flex gap-2  items-center justify-center">
+              <button
+                className="w-10/12  py-3 bg-black rounded-md text-white text-sm font-semibold hover:opacity-70 flex gap-2  items-center justify-center"
+                onClick={handleAddCart}
+              >
                 <ShoppingBag className="w-4 h-4" /> Add to cart
               </button>
               <button className="w-1/12 py-1 rounded-md bg-gray-200 flex items-center justify-center hover:opacity-70">
