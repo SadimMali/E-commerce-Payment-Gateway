@@ -1,5 +1,7 @@
+"use client"
 import { Cart } from "@/context/CartContext";
 import axios from "axios"
+import { useRouter } from "next/navigation";
 
 interface User  {
     name: string;
@@ -20,6 +22,7 @@ interface Props {
 
 
 const KhaltiPayment = ({price, user, cart}: Props) => {
+  const router = useRouter()
     console.log("payemt", price)
     console.log(user)
 
@@ -27,6 +30,11 @@ const KhaltiPayment = ({price, user, cart}: Props) => {
             try {
                 const response = await axios.post('/api/epayment', {price: price, user:user , cart:cart})
                 console.log("server api",response);
+                const data = response.data;
+                console.log(data)
+                if(data.success){
+                  router.push(data.message.payment_url)
+                }
             } catch (err) {
                 console.log(err);
             }
