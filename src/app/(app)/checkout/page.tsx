@@ -5,10 +5,16 @@ import React, { useContext } from "react";
 import { calculatePrice } from "../cart/page";
 import { CartContext } from "@/context/CartContext";
 import KhaltiPayment from "@/components/payment/KhaltiPayment";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   const cartContext = useContext(CartContext);
   if (!cartContext) return;
+
+  const router = useRouter()
+  if(cartContext.cart.length === 0) {
+    router.push("/cart")
+  }
 
   const price = calculatePrice(0, cartContext.cart);
 
