@@ -30,7 +30,7 @@ const Navbar = () => {
             <button className="relative">
               <ShoppingCart className="h-6 w-6" />
               {cart.length > 0 && (
-                <span className="absolute flex items-center justify-center text-xs font-semibold w-4 h-4 p-2 border-2 rounded-full border-red-600 -right-4 -top-3">
+                <span className="absolute flex items-center justify-center text-xs font-semibold w-4 h-4 p-2 border-2 rounded-full border-red-600 bg-red-600 text-white -right-4 -top-3">
                   {quantity}
                 </span>
               )}
