@@ -1,5 +1,6 @@
 "use client";
 
+import CartModal from "@/components/cart/CartModal";
 import { useToast } from "@/components/hooks/use-toast";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import {  CartContext } from "@/context/CartContext";
@@ -66,6 +67,7 @@ const page = () => {
 //         description: "Product added to cart successfully",
 //     });
 // };
+const [isOpenModal, setIsOpenModal] = useState(false);
 
 const handleAddCart = () => {
   if (!filterProduct) return;
@@ -95,8 +97,8 @@ const handleAddCart = () => {
     title: "Add product to cart",
     description: "Product added to cart successfully",
   });
+  setIsOpenModal(true)
 };
-
   
   return (
     <main className="w-full h-full">
@@ -198,6 +200,8 @@ const handleAddCart = () => {
             </p>
           </div>
         </div>
+          {/* Cart Modal */}
+        <CartModal cart={filterProduct} isOpen={isOpenModal} onClose={()=> setIsOpenModal(false)} />
       </MaxWidthWrapper>
     </main>
   );
