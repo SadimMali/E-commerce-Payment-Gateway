@@ -1,26 +1,53 @@
 "use client";
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { calculatePrice } from "@/utils/calculatePrice";
 import { CartContext } from "@/context/CartContext";
 import KhaltiPayment from "@/components/payment/KhaltiPayment";
-import { useRouter } from "next/navigation";
-import Delivery from "@/components/checkout/Delivery";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+import { useForm } from "react-hook-form";
 
-const page = () => {
+export type DeliveryData = {
+  firstName: string;
+  lastName: string;
+  city: string;
+  address: string;
+  email: string;
+  phone_number: number;
+};
+
+type PayementType = "khalti" | "esewa";
+
+const Delivery = dynamic(() => import("@/components/checkout/Delivery"), {
+  loading: () => <p>Loading...</p>,
+});
+
+const Page = () => {
+  const router = useRouter();
+  const [deliveryData, setDeliveryData] = useState<DeliveryData>();
+  const [isDeliveryPreview, setIsDeliveryPreview] = useState<boolean>(false);
+  const [paymentType, setPaymentType] = useState<PayementType>("khalti");
+  const form = useForm();
+
+  console.log(paymentType);
+
   const cartContext = useContext(CartContext);
   if (!cartContext) return;
 
-  const router = useRouter();
   // if (cartContext.cart.length === 0) {
   //   router.push("/cart");
   // }
 
-  let active: boolean = true;
   const price = calculatePrice(0, cartContext.cart);
+
+  const handleRadioGroup = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event);
+  };
 
   const user = {
     name: "Sadim Mali",
@@ -42,9 +69,59 @@ const page = () => {
               <div>
                 <Button variant="outline">Shipping</Button>
               </div>
-              <Delivery />
+              <Delivery
+                deliveryData={deliveryData!}
+                setDeliveryData={setDeliveryData}
+                isDeliveryPreview={isDeliveryPreview}
+                setIsDeliveryPreview={setIsDeliveryPreview}
+              />
             </div>
+            {deliveryData && isDeliveryPreview && (
+              <>
+                <div className="space-y-4">
+                  <h2>Payment</h2>
+                  <div>
+                    <p className="text-sm">Select payment method</p>
+                    <div>
+                      <RadioGroup
+                        defaultValue="khalti"
+                        onChange={handleRadioGroup}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="khalti" id="khalti" />
+                          <label htmlFor="khalti" className="text-purple-700">
+                            <Image
+                              src="/khalti.png"
+                              alt=""
+                              width={100}
+                              height={100}
+                            />
+                          </label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="esewa" id="esewa" />
+                          <label htmlFor="esewa" className="text-green-500">
+                            <Image
+                              src="/esewa.png"
+                              alt=""
+                              width={100}
+                              height={100}
+                            />
+                          </label>
+                        </div>
+                      </RadioGroup>
+                      <p>
+                        You will be redirected to the Khalti site after
+                        reviewing your order.
+                      </p>
+                      <Button>Continue to Order Review</Button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
             {/* esewa */}
+
             <KhaltiPayment price={price} user={user} cart={cartContext.cart} />
           </div>
           <div className=" md:w-1/3">
@@ -77,4 +154,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

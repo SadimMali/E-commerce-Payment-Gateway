@@ -1,4 +1,5 @@
 "use client";
+import { DeliveryData } from "@/app/(app)/checkout/page";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,24 +12,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { deliverySchema } from "@/schemas/deliverySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
-type Props = {
-  firstName: string;
-  lastName: string;
-  city: string;
-  address: string;
-  email: string;
-  phone_number: number;
-};
 
 const DeliveryPreview = ({
   data,
   setIsDeliveryPreview,
 }: {
-  data: Props;
+  data: DeliveryData;
   setIsDeliveryPreview: Dispatch<SetStateAction<boolean>>;
 }) => {
   return (
@@ -53,10 +45,19 @@ const DeliveryPreview = ({
   );
 };
 
-const Delivery = () => {
-  const [deliveryData, setDeliveryData] = useState<any>({});
-  const [isDeliveryPreview, setIsDeliveryPreview] = useState<boolean>(false);
+type DeliveryProps = {
+  deliveryData: DeliveryData;
+  setDeliveryData: Dispatch<SetStateAction<any>>;
+  isDeliveryPreview: boolean;
+  setIsDeliveryPreview: Dispatch<SetStateAction<boolean>>;
+};
 
+const Delivery = ({
+  deliveryData,
+  setDeliveryData,
+  isDeliveryPreview,
+  setIsDeliveryPreview,
+}: DeliveryProps) => {
   const form = useForm<z.infer<typeof deliverySchema>>({
     resolver: zodResolver(deliverySchema),
     defaultValues: {
