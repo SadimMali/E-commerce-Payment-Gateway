@@ -79,7 +79,7 @@ const Delivery = ({
     <div className="">
       {!isDeliveryPreview && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mb-8">
             <div className="flex flex-col md:flex-row gap-4 w-full">
               <FormField
                 control={form.control}
@@ -159,14 +159,16 @@ const Delivery = ({
                   <FormItem className="w-full">
                     <FormLabel>Phone number</FormLabel>
                     <FormControl>
-                      <Input placeholder="Phone number" {...field} />
+                      <Input placeholder="Phone number" {...field} maxLength={10}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <Button type="submit">Submit</Button>
+            <div className="flex w-full justify-end">
+            <Button type="submit" className="rounded-3xl px-6 py-6">Save & Continue</Button>
+            </div>
           </form>
         </Form>
       )}
