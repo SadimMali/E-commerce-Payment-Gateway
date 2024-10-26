@@ -179,9 +179,12 @@ const Page = () => {
               <PaymentPreview type={paymentType.type} />
             )}
 
-            {/* esewa */}
-            
+            {/* khalti */}
+            // show payment btn on deliveryData & payment type
+             {
+               (deliveryData && paymentType) &&
             <KhaltiPayment price={price} user={user} cart={cartContext.cart} />
+            }
           </div>
           <div className=" md:w-1/3">
             <div className="mb-10">
