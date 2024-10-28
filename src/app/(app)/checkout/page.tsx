@@ -45,7 +45,7 @@ const Delivery = dynamic(() => import("@/components/checkout/Delivery"), {
 
 const PaymentPreview = ({ type }: z.infer<typeof RadioPayementSchema>) => {
   return (
-    <div className="ring-2 ring-gray-600 rounded-md p-4 flex flex-col gap-2 mb-4">
+    <div className="rounded-md p-4 flex flex-col gap-2 mb-4">
       <h2>Payment method</h2>
       <Image src={`/${type}.png`} alt={type} width={90} height={90} />
     </div>
@@ -111,7 +111,20 @@ const Page = () => {
                 setIsDeliveryPreview={setIsDeliveryPreview}
               />
             </div>
-            <h2 className="text-xl my-2 font-medium">Payment</h2>
+            <div className="flex w-full gap-2 items-center justify-between">
+              <h2 className="text-xl my-2 font-medium">Payment</h2>
+              {/* EDIT BUTTON */}
+              {isPaymentPreview && (
+                <div className="mr-2">
+                  <button
+                    className="underline text-black font-semibold hover:text-gray-500"
+                    onClick={() => setIsPaymentPreview(false)}
+                  >
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
             {deliveryData && isDeliveryPreview && !isPaymentPreview && (
               <>
                 <div className="space-y-4">
@@ -180,11 +193,15 @@ const Page = () => {
             )}
 
             {/* khalti */}
-            // show payment btn on deliveryData & payment type
-             {
-               (deliveryData && paymentType) &&
-            <KhaltiPayment price={price} user={user} cart={cartContext.cart} />
-            }
+
+            {/* /show payment btn on deliveryData & payment type */}
+            {deliveryData && paymentType && isPaymentPreview && (
+              <KhaltiPayment
+                price={price}
+                user={user}
+                cart={cartContext.cart}
+              />
+            )}
           </div>
           <div className=" md:w-1/3">
             <div className="mb-10">
