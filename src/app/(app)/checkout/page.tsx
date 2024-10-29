@@ -63,6 +63,7 @@ const Page = () => {
   const form = useForm<z.infer<typeof RadioPayementSchema>>({
     resolver: zodResolver(RadioPayementSchema),
   });
+  
 
   function onSubmit(data: z.infer<typeof RadioPayementSchema>) {
     setPaymentType(data);
@@ -114,7 +115,7 @@ const Page = () => {
             <div className="flex w-full gap-2 items-center justify-between">
               <h2 className="text-xl my-2 font-medium">Payment</h2>
               {/* EDIT BUTTON */}
-              {isPaymentPreview && (
+              {isPaymentPreview && isDeliveryPreview && (
                 <div className="mr-2">
                   <button
                     className="underline text-black font-semibold hover:text-gray-500"
