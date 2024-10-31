@@ -196,7 +196,7 @@ const Page = () => {
             {/* khalti */}
 
             {/* /show payment btn on deliveryData & payment type */}
-            {deliveryData && paymentType && isPaymentPreview && (
+            {(isDeliveryPreview && paymentType && isPaymentPreview )&& (
               <KhaltiPayment
                 price={price}
                 user={user}
