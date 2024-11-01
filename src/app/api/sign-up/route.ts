@@ -53,6 +53,7 @@ export async function POST(req: Request) {
           data: {
             password: hashedPassword,
             verifyCode,
+            verifyCodeExpiryDate: new Date(Date.now() + 3600000),
           },
         });
       }
