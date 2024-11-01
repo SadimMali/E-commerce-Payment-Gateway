@@ -1,33 +1,38 @@
-import { dbConnect } from "@/lib/dbConnector";
-import UserModel from "@/model/User.model";
+import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
-  await dbConnect();
   try {
     const {
       username,
       email,
       password,
-      firstName,
-      lastName,
+      firstname,
+      lastname,
       location,
       phone_number,
     } = await req.json();
 
-    const existingUserVerifiedByUsername = await UserModel.findOne({
-      username,
-      isVerified: true,
+    const existingUserVerifiedByUsername = await prisma.user.findUnique({
+      where: { username },
+      select: { isVerified: true },
     });
-    
-    if (existingUserVerifiedByUsername) {
+
+    if (
+      existingUserVerifiedByUsername &&
+      existingUserVerifiedByUsername.isVerified
+    ) {
       return Response.json(
         { success: false, message: "Username is already taken" },
         { status: 400 }
       );
     }
 
-    const existingUserByEmail = await UserModel.findOne({ email });
+    // const existingUserByEmail = await UserModel.findOne({ email });
+    const existingUserByEmail = await prisma.user.findUnique({
+      where: { email },
+    });
     const verifyCode = Math.floor(1000 + Math.random() * 9000).toString();
 
     if (existingUserByEmail) {
@@ -43,34 +48,49 @@ export async function POST(req: Request) {
         );
       } else {
         const hashedPassword = bcrypt.hashSync(password, 10);
-        existingUserByEmail.password = hashedPassword;
-        existingUserByEmail.verifyCode = verifyCode;
-        existingUserByEmail.verifyCodeExpiryDate = new Date(
-          Date.now() * 3600000
-        );
-        await existingUserByEmail.save();
+        await prisma.user.update({
+          where: { email },
+          data: {
+            password: hashedPassword,
+            verifyCode,
+          },
+        });
       }
     } else {
       const hashedPassword = bcrypt.hashSync(password, 10);
       const expiryDate = new Date();
       expiryDate.setHours(expiryDate.getHours() + 1);
 
-      const newUser = new UserModel({
-        username,
-        email,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        location,
-        phone_number,
-        verifyCode,
-        verifyCodeExpiryDate: expiryDate,
-        isVerified: false,
+      const newUser = await prisma.user.create({
+        data: {
+          username,
+          firstName: firstname,
+          lastName: lastname,
+          email,
+          verifyCode,
+          verifyCodeExpiryDate: expiryDate,
+          password: hashedPassword,
+          isVerified: false,
+        },
       });
-      await newUser.save();
     }
 
     //send verification code through email
+    const emailResponse = await sendVerificationEmail({
+      email,
+      username,
+      otp: verifyCode,
+    });
+
+    if (!emailResponse.success) {
+      return Response.json(
+        {
+          success: false,
+          message: emailResponse.message,
+        },
+        { status: 500 }
+      );
+    }
 
     return Response.json(
       {
