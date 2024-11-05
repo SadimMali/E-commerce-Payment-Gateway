@@ -1,5 +1,6 @@
 "use client";
 import { Cart } from "@/context/CartContext";
+import { DeliveryType } from "@/schemas/deliverySchema";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -17,22 +18,24 @@ interface Price {
 }
 
 interface Props {
+  deliveryDetails: DeliveryType;
   price: Price;
   user: User;
   cart: Array<Cart>;
 }
 
-const KhaltiPayment = ({ price, user, cart }: Props) => {
+const KhaltiPayment = ({ deliveryDetails, price, user, cart }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  
+
   const handleKhaltiPayment = async () => {
     setIsLoading(true);
     try {
       const response = await axios.post("/api/epayment", {
-        price: price,
-        user: user,
-        cart: cart,
+        deliveryDetails,
+        price,
+        user,
+        cart,
       });
       console.log("server api", response);
       const data = response.data;

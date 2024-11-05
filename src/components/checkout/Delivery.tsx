@@ -1,5 +1,4 @@
 "use client";
-import { DeliveryData } from "@/app/(app)/checkout/page";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { deliverySchema } from "@/schemas/deliverySchema";
+import { DeliveryType, deliverySchema } from "@/schemas/deliverySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
@@ -20,7 +19,7 @@ const DeliveryPreview = ({
   data,
   setIsDeliveryPreview,
 }: {
-  data: DeliveryData;
+  data: DeliveryType;
   setIsDeliveryPreview: Dispatch<SetStateAction<boolean>>;
 }) => {
   return (
@@ -46,7 +45,7 @@ const DeliveryPreview = ({
 };
 
 type DeliveryProps = {
-  deliveryData: DeliveryData;
+  deliveryData: DeliveryType;
   setDeliveryData: Dispatch<SetStateAction<any>>;
   isDeliveryPreview: boolean;
   setIsDeliveryPreview: Dispatch<SetStateAction<boolean>>;

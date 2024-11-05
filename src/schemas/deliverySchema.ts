@@ -11,3 +11,6 @@ export const deliverySchema = z.object({
     .regex(/^\d{10}$/, "Phone number must be exactly 10 digits")
     .trim(),
 });
+
+// delievery details type
+export type DeliveryType= z.infer<typeof deliverySchema>

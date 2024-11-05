@@ -1,20 +1,17 @@
 "use client";
 
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import React, { useContext, useState } from "react";
-import { calculatePrice } from "@/utils/calculatePrice";
-import { CartContext } from "@/context/CartContext";
-import KhaltiPayment from "@/components/payment/KhaltiPayment";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import Image from "next/image";
-import dynamic from "next/dynamic";
-import { useForm } from "react-hook-form";
+import { toast } from "@/components/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { toast } from "@/components/hooks/use-toast";
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import KhaltiPayment from "@/components/payment/KhaltiPayment";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -23,27 +20,26 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { CartContext } from "@/context/CartContext";
+import { DeliveryType } from "@/schemas/deliverySchema";
+import { calculatePrice } from "@/utils/calculatePrice";
 
-const RadioPayementSchema = z.object({
+//Dynamic imports
+const Delivery = dynamic(() => import("@/components/checkout/Delivery"), {
+  loading: () => <p>Loading...</p>,
+});
+
+// Schema and type
+const radioPayementSchema = z.object({
   type: z.enum(["khalti", "esewa"], {
     required_error: "You need to select a payment type.",
   }),
 });
 
-export type DeliveryData = {
-  firstName: string;
-  lastName: string;
-  city: string;
-  address: string;
-  email: string;
-  phone_number: number;
-};
+type RadioPayementSchema = z.infer<typeof radioPayementSchema>;
 
-const Delivery = dynamic(() => import("@/components/checkout/Delivery"), {
-  loading: () => <p>Loading...</p>,
-});
-
-const PaymentPreview = ({ type }: z.infer<typeof RadioPayementSchema>) => {
+const PaymentPreview = ({ type }: RadioPayementSchema) => {
   return (
     <div className="rounded-md p-4 flex flex-col gap-2 mb-4">
       <h2>Payment method</h2>
@@ -52,20 +48,32 @@ const PaymentPreview = ({ type }: z.infer<typeof RadioPayementSchema>) => {
   );
 };
 
+const paymentMethods = [
+  { id: "khalti", label: "Khalti", imageSrc: "/khalti.png" },
+  { id: "esewa", label: "eSewa", imageSrc: "/esewa.png" },
+];
+
 const Page = () => {
   const router = useRouter();
-  const [deliveryData, setDeliveryData] = useState<DeliveryData>();
+  const [deliveryData, setDeliveryData] = useState<DeliveryType>({
+    firstName: "",
+    lastName: "",
+    city: "",
+    address: "",
+    email: "",
+    phone_number: "",
+  });
   const [isDeliveryPreview, setIsDeliveryPreview] = useState<boolean>(false);
-  const [paymentType, setPaymentType] =
-    useState<z.infer<typeof RadioPayementSchema>>();
+  const [paymentType, setPaymentType] = useState<RadioPayementSchema | null>(
+    null
+  );
   const [isPaymentPreview, setIsPaymentPreview] = useState<boolean>(false);
 
-  const form = useForm<z.infer<typeof RadioPayementSchema>>({
-    resolver: zodResolver(RadioPayementSchema),
+  const form = useForm<RadioPayementSchema>({
+    resolver: zodResolver(radioPayementSchema),
   });
-  
 
-  function onSubmit(data: z.infer<typeof RadioPayementSchema>) {
+  function onSubmit(data: RadioPayementSchema) {
     setPaymentType(data);
     setIsPaymentPreview(true);
     toast({
@@ -81,17 +89,21 @@ const Page = () => {
   const cartContext = useContext(CartContext);
   if (!cartContext) return;
 
+  // Redirect to page incase no product in the cart
   // if (cartContext.cart.length === 0) {
   //   router.push("/cart");
   // }
 
   const price = calculatePrice(0, cartContext.cart);
 
+  // TODO:Mocked user data (to be replaced with actual user data )
+
   const user = {
     name: "Sadim Mali",
     email: "sadimmalakar77@gmail.com",
     phonenumber: "9749497621",
   };
+
   return (
     <div>
       <MaxWidthWrapper>
@@ -105,8 +117,9 @@ const Page = () => {
               <div>
                 <Button variant="outline">Shipping</Button>
               </div>
+
               <Delivery
-                deliveryData={deliveryData!}
+                deliveryData={deliveryData}
                 setDeliveryData={setDeliveryData}
                 isDeliveryPreview={isDeliveryPreview}
                 setIsDeliveryPreview={setIsDeliveryPreview}
@@ -146,32 +159,24 @@ const Page = () => {
                                 defaultValue={field.value}
                                 className="flex flex-col space-y-1"
                               >
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                  <FormControl>
-                                    <RadioGroupItem value="khalti" />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    <Image
-                                      src="/khalti.png"
-                                      alt=""
-                                      width={100}
-                                      height={100}
-                                    />
-                                  </FormLabel>
-                                </FormItem>
-                                <FormItem className="flex items-center space-x-3 space-y-0">
-                                  <FormControl>
-                                    <RadioGroupItem value="esewa" />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    <Image
-                                      src="/esewa.png"
-                                      alt=""
-                                      width={100}
-                                      height={100}
-                                    />
-                                  </FormLabel>
-                                </FormItem>
+                                {paymentMethods.map((method) => (
+                                  <FormItem
+                                    key={method.id}
+                                    className="flex items-center space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <RadioGroupItem value={method.id} />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      <Image
+                                        src={method.imageSrc}
+                                        alt={method.label}
+                                        width={100}
+                                        height={100}
+                                      />
+                                    </FormLabel>
+                                  </FormItem>
+                                ))}
                               </RadioGroup>
                             </FormControl>
                             <FormMessage />
@@ -196,14 +201,20 @@ const Page = () => {
             {/* khalti */}
 
             {/* /show payment btn on deliveryData & payment type */}
-            {(isDeliveryPreview && paymentType && isPaymentPreview )&& (
-              <KhaltiPayment
-                price={price}
-                user={user}
-                cart={cartContext.cart}
-              />
-            )}
+            {isDeliveryPreview &&
+              paymentType &&
+              isPaymentPreview &&
+              deliveryData && (
+                <KhaltiPayment
+                  deliveryDetails={deliveryData}
+                  price={price}
+                  user={user}
+                  cart={cartContext.cart}
+                />
+              )}
           </div>
+
+          {/* order summary */}
           <div className=" md:w-1/3">
             <div className="mb-10">
               <h4 className="text-xl font-semibold">In Your Bag</h4>
