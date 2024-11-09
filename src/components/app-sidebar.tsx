@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Computer, Home, Logs, Settings, Users } from "lucide-react";
 
 import {
   Sidebar,
@@ -9,38 +9,68 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
 // Menu items.
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/",
     icon: Home,
+    visible: ["ADMIN", "USER"],
+  },
+
+  // Admin-specific items
+  {
+    title: "Products",
+    url: "/admin/products",
+    icon: Computer,
+    visible: ["ADMIN"],
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "Orders",
+    url: "/admin/orders",
+    icon: Logs,
+    visible: ["ADMIN"],
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
+    title: "Users",
+    url: "/admin/users",
+    icon: Users,
+    visible: ["ADMIN"],
+  },
+  // User-specific items
+  {
+    title: "My Orders",
+    url: "/orders",
+    icon: Logs,
+    visible: ["USER"],
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
+    title: "Profile",
+    url: "/profile",
+    icon: Users,
+    visible: ["USER"],
+  },
+  {
+    title: "Wishlist",
+    url: "/wishlist",
+    icon: Computer,
+    visible: ["USER"],
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
+    visible: ["ADMIN", "USER"],
   },
-]
+];
 
-export function AppSidebar() {
+export async function AppSidebar() {
+  const session = await getServerSession(authOptions);
+  const { role } = session?.user;
   return (
     <Sidebar>
       <SidebarContent>
@@ -48,20 +78,24 @@ export function AppSidebar() {
           <SidebarGroupLabel>E commerce</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                if (item.visible.includes(role)) {
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <a href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                }
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
