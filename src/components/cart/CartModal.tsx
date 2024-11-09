@@ -8,13 +8,14 @@ import {
 } from "@/components/ui/dialog";
 import { Product } from "@/utils/products";
 import { Check } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 type CartModalProps = { cart: Product; isOpen: boolean; onClose: () => void };
 
 const CartModal = ({ cart, isOpen, onClose }: CartModalProps) => {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} >
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex gap-5">
@@ -24,8 +25,13 @@ const CartModal = ({ cart, isOpen, onClose }: CartModalProps) => {
           </DialogTitle>
         </DialogHeader>
         <div className="flex gap-4">
-          <div className="image-wrapper w-1/3 ">
-            <img src={cart.img} className="max-w-100 object-cover" />
+          <div className="image-wrapper relative w-1/3 ">
+            <Image
+              src={cart.img}
+              className="max-w-100 object-cover absolute"
+              fill
+              alt={cart.name || ""}
+            />
           </div>
           {/* content */}
           <div className="w-2/3 space-y-1 flex flex-col justify-center">
@@ -35,14 +41,16 @@ const CartModal = ({ cart, isOpen, onClose }: CartModalProps) => {
           </div>
         </div>
         <DialogFooter className="sm:justify-start">
-          <Button
-            type="button"
-            className="border hover:border-black rounded-3xl text-md w-48 h-14"
-            variant="outline"
-            onClick={onClose}
-          >
-            <Link href="/cart">View Bag</Link>
-          </Button>
+          <Link href="/cart">
+            <Button
+              type="button"
+              className="border hover:border-black rounded-3xl text-md w-48 h-14"
+              variant="outline"
+              onClick={onClose}
+            >
+              View Bag
+            </Button>
+          </Link>
         </DialogFooter>
       </DialogContent>
     </Dialog>
