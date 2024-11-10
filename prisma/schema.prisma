@@ -31,14 +31,23 @@ model User {
 
 model Product {
   id          String          @id @default(uuid())
-  name        String
+  subCategory String
   description String
+  img         String
+  name        String
   price       Decimal
   category    ProductCategory @relation(fields: [categoryId], references: [id])
   categoryId  String
+  otherImg    String[]        @db.Text
+  style       String
+  colorWay    String
+  releaseDate DateTime
   userId      String?
   User        User?           @relation(fields: [userId], references: [id])
   orders      Order[]
+
+  @@index([categoryId])
+  @@index([userId])
 }
 
 model ProductCategory {
