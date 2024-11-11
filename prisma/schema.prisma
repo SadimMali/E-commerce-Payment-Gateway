@@ -30,29 +30,37 @@ model User {
 }
 
 model Product {
-  id          String          @id @default(uuid())
-  subCategory String
-  description String
-  img         String
-  name        String
-  price       Decimal
-  category    ProductCategory @relation(fields: [categoryId], references: [id])
-  categoryId  String
-  otherImg    String[]        @db.Text
-  style       String
-  colorWay    String
-  releaseDate DateTime
-  userId      String?
-  User        User?           @relation(fields: [userId], references: [id])
-  orders      Order[]
+  id            String             @id @default(uuid())
+  description   String
+  img           String
+  name          String
+  price         Decimal
+  category      ProductCategory    @relation(fields: [categoryId], references: [id])
+  subCategory   ProductSubCategory @relation(fields: [subCategoryId], references: [id])
+  categoryId    String
+  subCategoryId String
+  otherImg      String[]           @db.Text
+  style         String
+  colorWay      String
+  releaseDate   DateTime?
+  userId        String?
+  User          User?              @relation(fields: [userId], references: [id])
+  orders        Order[]
 
   @@index([categoryId])
+  @@index([subCategoryId])
   @@index([userId])
 }
 
 model ProductCategory {
   id       String    @id @default(uuid())
-  name     String
+  name     String    @unique
+  products Product[]
+}
+
+model ProductSubCategory {
+  id       String    @id @default(uuid())
+  name     String    @unique
   products Product[]
 }
 
