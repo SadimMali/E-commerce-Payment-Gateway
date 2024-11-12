@@ -1,75 +1,45 @@
-"use client";
-
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import ProductCard from "@/components/ProductCard";
-import { cn } from "@/lib/utils";
-import { CATEGORY_FILTERS, Product, PRODUCTS } from "@/utils/products";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import CategoriesProduct from "@/components/products/CategoriesProduct";
+import FilterProduct from "@/components/products/FilterProduct";
+import { prisma } from "@/lib/prisma";
+import {
+  Prisma,
+} from "@prisma/client";
 
-const Page = () => {
-  const router = useRouter();
+type SearchParams = { [key: string]: string | undefined };
+const Page = async ({ searchParams }: { searchParams: SearchParams }) => {
+  const { category } = searchParams;
 
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const searchParams = useSearchParams();
-  const category = searchParams.get("category");
+  //Filter the products based on category or subCategory
+  let query: Prisma.ProductWhereInput = {};
+  if (category && category !== "all") {
+    query.OR = [
+      { category: { name: category } },
+      { subCategory: { name: category } },
+    ];
+  }
 
-  useEffect(() => {
-    if (category == "all") setFilteredProducts(PRODUCTS);
-    else
-      setFilteredProducts(
-        PRODUCTS.filter(
-          (product) =>
-            product.category == category || product.subCategory == category
-        )
-      );
-  }, [category]);
-
-  //fn to set searchParams based on the argument passed
-  const updateSearchParams = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value);
-    router.push(`${window.location.pathname}?${params.toString()}`);
-  };
+  //Fetch products
+  const products = await prisma.product.findMany({
+    include: {
+      category: true,
+      subCategory: true,
+    },
+    where: query,
+  });
 
   return (
     <main>
       <MaxWidthWrapper>
-          <h3 className="font-semibold text-3xl mt-2 text-center uppercase">{category}</h3>
         {/* filter */}
-        <div className="py-5 md:py-10 flex gap-4 flex-wrap">
-          {CATEGORY_FILTERS.map((filter) => (
-            <button
-              className={cn(
-                "border-2 px-2 py-1 border-gray-300 hover:border-black transition-all",
-                { "border-black": filter.name === category }
-              )}
-              key={filter.id}
-              onClick={() => updateSearchParams("category", filter.name)}
-            >
-              <span className="text-sm">{filter.name}</span>
-            </button>
-          ))}
-        </div>
+        <FilterProduct />
         <p className="text-base mb-5">
           <span className="font-semibold">Showing results:</span>{" "}
-          {filteredProducts.length}
+          {products.length}
         </p>
         {/* products cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <Link key={product.id} href={`/product/${product.id}`}>
-                <ProductCard item={product} />
-              </Link>
-            ))
-          ) : (
-            <p className="mt-5">No result found</p>
-          )}
-        </div>
+        <CategoriesProduct products={products} />
       </MaxWidthWrapper>
-      ``
     </main>
   );
 };
