@@ -13,7 +13,7 @@ const CartItem = () => {
     return <div>Loading...</div>;
   }
   const { cart, setCart } = cartContext;
-  const onRemoveCart = (id: number) => {
+  const onRemoveCart = (id: string) => {
     setCart((item) => item.filter((prev) => prev.id !== id));
     toast({
       title: "Remove product",
