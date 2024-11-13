@@ -1,9 +1,9 @@
 "use client"
-import { Product } from "@/utils/products";
+import { ProductList } from "@/types/Products.type";
 import React, { createContext, Dispatch, SetStateAction, useState } from "react";
 
 
-export interface Cart extends Product {
+export interface Cart extends ProductList {
     quantity: number;
 }
 interface CartContextType {
