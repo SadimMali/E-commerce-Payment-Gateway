@@ -25,7 +25,7 @@ const Navbar = () => {
   // Handle the loading state for the entire navbar
   if (status === "loading") {
     return (
-      <nav className="sticky z-[100] inset-x-0 w-full top-0 h-14 border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
+      <nav className="sticky z-10 inset-x-0 w-full top-0 h-14 border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
         <MaxWidthWraper>
           <div className="h-14 flex items-center justify-between">
             <Link href="/" className="font-semibold text-base">
@@ -45,7 +45,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="sticky z-[100] inset-x-0 w-full top-0 h-14 border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
+    <nav className="sticky z-10 inset-x-0 w-full top-0 h-14 border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
       <MaxWidthWraper>
         <div className="h-14 flex items-center justify-between">
           <Link href="/" className="font-semibold text-base">
