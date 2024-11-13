@@ -6,12 +6,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Product } from "@/utils/products";
+import { ProductList } from "@/types/Products.type";
 import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-type CartModalProps = { cart: Product; isOpen: boolean; onClose: () => void };
+type CartModalProps = { cart: ProductList; isOpen: boolean; onClose: () => void };
 
 const CartModal = ({ cart, isOpen, onClose }: CartModalProps) => {
   return (
@@ -36,8 +36,8 @@ const CartModal = ({ cart, isOpen, onClose }: CartModalProps) => {
           {/* content */}
           <div className="w-2/3 space-y-1 flex flex-col justify-center">
             <h3 className="text-lg font-semibold">{cart.name}</h3>
-            <p className="text-md text-gray-500">{cart.subName}</p>
-            <p className="text-md font-medium"> &#36;{cart.price}</p>
+            <p className="text-md text-gray-500">{cart.subCategory.name}</p>
+            <p className="text-md font-medium"> Rs {cart.price}</p>
           </div>
         </div>
         <DialogFooter className="sm:justify-start">
@@ -49,6 +49,16 @@ const CartModal = ({ cart, isOpen, onClose }: CartModalProps) => {
               onClick={onClose}
             >
               View Bag
+            </Button>
+          </Link>
+          <Link href="/checkout">
+            <Button
+              type="button"
+              className="bg-black text-white hover:bg-white hover:text-black hover:border-black border rounded-3xl text-md w-48 h-14"
+              variant="secondary"
+              onClick={onClose}
+            >
+              Checkout
             </Button>
           </Link>
         </DialogFooter>
