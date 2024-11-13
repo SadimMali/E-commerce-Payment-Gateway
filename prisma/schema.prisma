@@ -34,7 +34,7 @@ model Product {
   description   String
   img           String
   name          String
-  price         Decimal
+  price         Float
   category      ProductCategory    @relation(fields: [categoryId], references: [id])
   subCategory   ProductSubCategory @relation(fields: [subCategoryId], references: [id])
   categoryId    String
