@@ -1,10 +1,17 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import CategoriesProduct from "@/components/products/CategoriesProduct";
 import FilterProduct from "@/components/products/FilterProduct";
 import { prisma } from "@/lib/prisma";
-import {
-  Prisma,
-} from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import dynamic from "next/dynamic";
+
+//Lazy loading Categories product component
+const CategoriesProduct = dynamic(
+  () => import("@/components/products/CategoriesProduct"),
+  {
+    ssr: false,
+    loading: () => <p>Loading...</p>,
+  }
+);
 
 type SearchParams = { [key: string]: string | undefined };
 const Page = async ({ searchParams }: { searchParams: SearchParams }) => {
