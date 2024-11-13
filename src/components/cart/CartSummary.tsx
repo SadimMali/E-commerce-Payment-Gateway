@@ -10,12 +10,12 @@ const CartSummary = () => {
     const {cart} = cartContext
     const price = calculatePrice(0, cart)
   return (
-    <aside className="lg:w-1/3 md:px-5">
+    <aside className="lg:w-1/3 md:px-5 pb-5">
     <h3 className="text-2xl font-medium">Summary</h3>
     <div className="flex w-full items-center justify-between mt-2">
       <span className="font-semibold">Subtotal</span>
       {price.subTotalPrice ? (
-        <span>&#36;{price.subTotalPrice}</span>
+        <span>Rs {price.subTotalPrice}</span>
       ) : (
         "-"
       )}
@@ -24,12 +24,12 @@ const CartSummary = () => {
       <span className="font-semibold">
         Estimated Shipping & Handling
       </span>
-      {price.charge ? <span>&#36;{price.charge}</span> : "0"}
+      {price.charge ? <span>Rs {price.charge}</span> : "0"}
     </div>
     <div className="w-full border px-2 mt-3" />
     <div className="flex w-full items-center justify-between mt-2">
       <span className="font-semibold">Total</span>
-      {price.totalPrice ? <span>&#36;{price.totalPrice}</span> : "-"}
+      {price.totalPrice ? <span>Rs {price.totalPrice}</span> : "-"}
     </div>
     <div className="w-full border mt-2" />
 
