@@ -24,21 +24,25 @@ export const CartContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [cart, setCart] = useState<Cart[]>([]);
+  const [isMouted, setIsMouted] = useState<boolean>(false);
 
   //useEffect hook to run once when the component mount
   // This fetches the cart from the LocalStorage if available
   useEffect(() => {
-    if (typeof window == "undefined") return;
-    const storedCart = localStorage.getItem("cart");
-    storedCart ? setCart(JSON.parse(storedCart)) : [];
+    if (typeof window !== "undefined") {
+      const storedCart = localStorage.getItem("cart");
+      console.log(storedCart);
+      if (storedCart) setCart(JSON.parse(storedCart));
+      setIsMouted(true);
+    }
   }, []);
 
   // useEffect hook to update localStorage whenever the cart changes
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isMouted && typeof window !== "undefined") {
       localStorage.setItem("cart", JSON.stringify(cart));
     }
-  }, [cart]);
+  }, [isMouted, cart]); 
   return (
     <CartContext.Provider value={{ cart, setCart }}>
       {children}
