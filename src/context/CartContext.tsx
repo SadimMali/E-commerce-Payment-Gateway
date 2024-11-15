@@ -18,24 +18,22 @@ interface CartContextType {
 
 export const CartContext = createContext<CartContextType | null>(null);
 
-const getCartFromLocalStorage = (): Cart[] => {
-  // execute only if window is typeof object
-  if (typeof window !== "undefined") {
-    const storedCart = localStorage.getItem("cart");
-    console.log(typeof storedCart)
-    return storedCart ? JSON.parse(storedCart) : [];
-  }
-  return [];
-};
-
 export const CartContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [cart, setCart] = useState<Cart[]>(getCartFromLocalStorage);
+  const [cart, setCart] = useState<Cart[]>([]);
 
-  //Store cart in localStorage whenever there are changes in cart item
+  //useEffect hook to run once when the component mount
+  // This fetches the cart from the LocalStorage if available
+  useEffect(() => {
+    if (typeof window == "undefined") return;
+    const storedCart = localStorage.getItem("cart");
+    storedCart ? setCart(JSON.parse(storedCart)) : [];
+  }, []);
+
+  // useEffect hook to update localStorage whenever the cart changes
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("cart", JSON.stringify(cart));
