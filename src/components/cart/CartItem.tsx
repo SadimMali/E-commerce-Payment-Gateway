@@ -33,13 +33,15 @@ const CartItem = () => {
         </p>
       </div>
 
-      {cart.length > 0 ? (
-        cart.map((c: Cart) => (
-          <CartItemCard item={c} key={c.id} onRemoveCart={onRemoveCart} />
-        ))
-      ) : (
-        <p>There are no items in the bag.</p>
-      )}
+      <div className="flex flex-col gap-4 ">
+        {cart.length > 0 ? (
+          cart.map((c: Cart) => (
+            <CartItemCard item={c} key={c.id} onRemoveCart={onRemoveCart} />
+          ))
+        ) : (
+          <p>There are no items in the bag.</p>
+        )}
+      </div>
     </section>
   );
 };
