@@ -70,6 +70,7 @@ export async function POST(req: Request) {
           email,
           verifyCode,
           verifyCodeExpiryDate: expiryDate,
+          number: phone_number,
           password: hashedPassword,
           isVerified: false,
         },

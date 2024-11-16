@@ -1,11 +1,13 @@
 /*
   Warnings:
 
+  - You are about to alter the column `price` on the `Product` table. The data in that column could be lost. The data in that column will be cast from `Decimal(65,30)` to `DoublePrecision`.
   - A unique constraint covering the columns `[name]` on the table `ProductCategory` will be added. If there are existing duplicate values, this will fail.
   - Added the required column `colorWay` to the `Product` table without a default value. This is not possible if the table is not empty.
   - Added the required column `img` to the `Product` table without a default value. This is not possible if the table is not empty.
   - Added the required column `style` to the `Product` table without a default value. This is not possible if the table is not empty.
   - Added the required column `subCategoryId` to the `Product` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `number` to the `User` table without a default value. This is not possible if the table is not empty.
 
 */
 -- AlterTable
@@ -14,7 +16,11 @@ ADD COLUMN     "img" TEXT NOT NULL,
 ADD COLUMN     "otherImg" TEXT[],
 ADD COLUMN     "releaseDate" TIMESTAMP(3),
 ADD COLUMN     "style" TEXT NOT NULL,
-ADD COLUMN     "subCategoryId" TEXT NOT NULL;
+ADD COLUMN     "subCategoryId" TEXT NOT NULL,
+ALTER COLUMN "price" SET DATA TYPE DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "number" TEXT NOT NULL;
 
 -- CreateTable
 CREATE TABLE "ProductSubCategory" (

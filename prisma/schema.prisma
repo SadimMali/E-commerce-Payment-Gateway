@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ROLE {
-  USER
-  ADMIN
-}
-
 model User {
   id                   String    @id @default(uuid())
   username             String    @unique
@@ -25,27 +20,28 @@ model User {
   address              String?
   role                 ROLE      @default(USER)
   createdAt            DateTime  @default(now())
-  products             Product[]
+  number               String
   orders               Order[]
+  products             Product[]
 }
 
 model Product {
   id            String             @id @default(uuid())
-  description   String
-  img           String
   name          String
+  description   String
   price         Float
+  categoryId    String
+  userId        String?
+  colorWay      String
+  img           String
+  otherImg      String[]
+  releaseDate   DateTime?
+  style         String
+  subCategoryId String
+  orders        Order[]
   category      ProductCategory    @relation(fields: [categoryId], references: [id])
   subCategory   ProductSubCategory @relation(fields: [subCategoryId], references: [id])
-  categoryId    String
-  subCategoryId String
-  otherImg      String[]           @db.Text
-  style         String
-  colorWay      String
-  releaseDate   DateTime?
-  userId        String?
   User          User?              @relation(fields: [userId], references: [id])
-  orders        Order[]
 
   @@index([categoryId])
   @@index([subCategoryId])
@@ -74,22 +70,17 @@ model Payment {
 
 model Order {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
   userId    String
-  product   Product  @relation(fields: [productId], references: [id])
   productId String
-  payment   Payment  @relation(fields: [paymentId], references: [id])
   paymentId String
   orderDate DateTime
   status    String
-  // tracking  TrackingDetail[]
+  payment   Payment  @relation(fields: [paymentId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
-// model TrackingDetail {
-//   id                String   @id @default(uuid())
-//   order             Order    @relation(fields: [orderId], references: [id])
-//   orderId           String
-//   trackingNumber    String
-//   status            String
-//   estimatedDelivery DateTime
-// }
+enum ROLE {
+  USER
+  ADMIN
+}
