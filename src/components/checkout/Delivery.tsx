@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { DeliveryType, deliverySchema } from "@/schemas/deliverySchema";
+import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -57,6 +60,7 @@ const Delivery = ({
   isDeliveryPreview,
   setIsDeliveryPreview,
 }: DeliveryProps) => {
+  const { data: session } = useSession();
   const form = useForm<z.infer<typeof deliverySchema>>({
     resolver: zodResolver(deliverySchema),
     defaultValues: {
@@ -69,6 +73,30 @@ const Delivery = ({
     },
   });
 
+  // If user is authenticated, fetch user data and reset Delivery input
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (session?.user.id) {
+        try {
+          const { data } = await axios.get<ApiResponse>("/api/getUser");
+          if (data.success && data) {
+            const user = data?.data;
+            form.reset({
+              firstName: user.firstName || "",
+              lastName: user.lastName || "",
+              email: user.email || "",
+              phone_number: user.number || "",
+              address: user.address || "",
+            });
+          }
+        } catch (err) {
+          console.error("Failed to fetch user data", err);
+        }
+      }
+    };
+    fetchUserData();
+  }, [session?.user.id, form]);
+
   const onSubmit = (data: z.infer<typeof deliverySchema>) => {
     console.log(data);
     setDeliveryData(data);
@@ -78,7 +106,10 @@ const Delivery = ({
     <div className="">
       {!isDeliveryPreview && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mb-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 mb-8"
+          >
             <div className="flex flex-col md:flex-row gap-4 w-full">
               <FormField
                 control={form.control}
@@ -158,7 +189,11 @@ const Delivery = ({
                   <FormItem className="w-full">
                     <FormLabel>Phone number</FormLabel>
                     <FormControl>
-                      <Input placeholder="Phone number" {...field} maxLength={10}/>
+                      <Input
+                        placeholder="Phone number"
+                        {...field}
+                        maxLength={10}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,7 +201,9 @@ const Delivery = ({
               />
             </div>
             <div className="flex w-full justify-end">
-            <Button type="submit" className="rounded-3xl px-6 py-6">Save & Continue</Button>
+              <Button type="submit" className="rounded-3xl px-6 py-6">
+                Save & Continue
+              </Button>
             </div>
           </form>
         </Form>
