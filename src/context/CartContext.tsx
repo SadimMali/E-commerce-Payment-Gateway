@@ -1,5 +1,5 @@
 "use client";
-import { ProductList } from "@/types/Products.type";
+import { Cart } from "@/types/Cart.type";
 import React, {
   createContext,
   Dispatch,
@@ -8,9 +8,6 @@ import React, {
   useState,
 } from "react";
 
-export interface Cart extends ProductList {
-  quantity: number;
-}
 interface CartContextType {
   cart: Cart[];
   setCart: Dispatch<SetStateAction<Cart[]>>;
@@ -31,7 +28,6 @@ export const CartContextProvider = ({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedCart = localStorage.getItem("cart");
-      console.log(storedCart);
       if (storedCart) setCart(JSON.parse(storedCart));
       setIsMouted(true);
     }
