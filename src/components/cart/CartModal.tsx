@@ -28,7 +28,7 @@ const CartModal = ({ cart, isOpen, onClose }: CartModalProps) => {
           <div className="image-wrapper relative w-1/3 ">
             <Image
               src={cart.img}
-              className="max-w-100 object-cover absolute"
+              className="max-w-100 object-contain absolute"
               fill
               alt={cart.name || ""}
             />
