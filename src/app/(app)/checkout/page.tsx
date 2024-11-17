@@ -208,7 +208,6 @@ const Page = () => {
                 <KhaltiPayment
                   deliveryDetails={deliveryData}
                   price={price}
-                  user={user}
                   cart={cartContext.cart}
                 />
               )}
