@@ -1,87 +1,99 @@
-import axios from "axios";
+import { createDelivery } from "@/services/deliveryService";
+import { addOrderItems, createOrder } from "@/services/orderService";
+import { createPayment, processKhaltiPayment } from "@/services/paymentService";
+import { Cart } from "@/types/Cart.type";
+import { Order } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/options";
+
+type CartDetails = {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+};
 
 export async function POST(req: Request) {
-    const {price} = await req.json();
-    const headers = {
-        Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`,
-    }
-  try {
+  const session = await getServerSession(authOptions);
+  const _user = session?.user;
 
-    // const payload = {
-    //   return_url: "http://localhost:3000/return/",
-    //   website_url: "http://localhost:3000/",
-    //   amount: price.totalPrice,
-    //   purchase_order_id: "test12",
-    //   purchase_order_name: "test",
-    //   customer_info: {
-    //     name: "Khalti Bahadur",
-    //     email: "example@gmail.com",
-    //     phone: "9800000123",
-    //   },
-    //   amount_breakdown: [
-    //     {
-    //       label: "Sub Price",
-    //       amount: price.subTotalPrice,
-    //     },
-    //     {
-    //       label: "Charge",
-    //       amount: price.charge,
-    //     },
-    //   ],
-    //   product_details: [
-    //     {
-    //       identity: "1234567890",
-    //       name: "Khalti logo",
-    //       total_price: 306,
-    //       quantity: 1,
-    //       unit_price: 306,
-    //     },
-    //   ],
-    //   merchant_username: process.env.KHALTI_MERCHANT_NAME,
-    //   merchant_extra: "merchant_extra",
-    // };
-    const payload = {
-      "return_url": "http://localhost:3000/callback",
-      "website_url": "http://localhost:3000/",
-      "amount": 1300,
-      "purchase_order_id": "test12",
-      "purchase_order_name": "test",
-      "customer_info": {
-          "name": "Khalti Bahadur",
-          "email": "example@gmail.com",
-          "phone": "9800000123"
-      },
-      "amount_breakdown": [
-          {
-              "label": "Mark Price",
-              "amount": 1000
-          },
-          {
-              "label": "VAT",
-              "amount": 300
-          }
-      ],
-      "product_details": [
-          {
-              "identity": "1234567890",
-              "name": "Khalti logo",
-              "total_price": 1300,
-              "quantity": 1,
-       "unit_price": 1300
-          }
-      ],
-      "merchant_username": "merchant_name",
-      "merchant_extra": "merchant_extra"
-    }
-    const res = await axios.post(
-      process.env.KHALTI_URL || '',
-      payload,
-      {headers}
+  let paymentMethod = "khalti";
+
+  if (!session?.user) {
+    return Response.json(
+      { success: false, message: "User not authenticated" },
+      { status: 401 }
     );
-    console.log(res.data); // Use res.data to see the response body
-    return Response.json({success: true, message: res.data}, {status: 200})
-  } catch (err) {
-    console.log("error", err);
-    return Response.json({ message: "hello" }, { status: 500 });
+  }
+
+  const { price, deliveryDetails: delivery, cart } = await req.json();
+
+  const cartDetails: Array<CartDetails> = cart?.map((product: Cart) => ({
+    id: product.id,
+    name: product.name,
+    quantity: product.quantity,
+    price: product.price,
+  }));
+
+  try {
+    // create a user delivery details
+    const newDelivery = await createDelivery(delivery);
+
+    //create a new order
+    const newOrder: Order = await createOrder(_user.id.toString(), newDelivery.id.toString());
+    
+    //add order Item
+    await addOrderItems(newOrder.id.toString(), cart);
+    
+    //Khalti
+    const payload = {
+      return_url: `${process.env.NEXT_CLIENT_URL}/success`,
+      website_url: process.env.NEXT_CLIENT_URL,
+      amount: price.totalPrice * 100,
+      purchase_order_id: newOrder.id.toString(),
+      purchase_order_name: "o" + newOrder.id,
+      customer_info: {
+        name: `${delivery.firstName} ${delivery.lastName}`,
+        email: delivery.email,
+      },
+      amount_breakdown: [
+        {
+          label: "Sub Price",
+          amount: price.subTotalPrice * 100,
+        },
+        {
+          label: "charge",
+          amount: price.charge * 100,
+        },
+      ],
+      product_details: cartDetails?.map((cart: CartDetails) => ({
+        identity: cart.id.toString(),
+        name: cart.name.toString(),
+        total_price: cart.price,
+        quantity: cart.quantity,
+        unit_price: 100,
+      })),
+
+      merchant_username: process.env.KHALTI_MERCHANT_NAME,
+    };
+
+    const paymentData = await processKhaltiPayment(
+      payload,
+      process.env.KHALTI_SECRET_KEY || ""
+    );
+
+    if (paymentData) {
+      await createPayment(paymentMethod, paymentData.pidx);
+      return Response.json(
+        { success: true, message: paymentData },
+        { status: 200 }
+      );
+    }
+  } catch (err: any) {
+    console.log("error", err.message);
+    return Response.json(
+      { message: err.message || "Error occured" },
+      { status: 500 }
+    );
   }
 }
