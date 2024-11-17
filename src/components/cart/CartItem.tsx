@@ -1,9 +1,10 @@
 "use client";
 import CartItemCard from "@/components/cart/CartItemCard";
 import React, { useContext } from "react";
-import { CartContext, type Cart } from "@/context/CartContext";
+import { CartContext } from "@/context/CartContext";
 import { useToast } from "../hooks/use-toast";
 import { calculatePrice } from "@/utils/calculatePrice";
+import { Cart } from "@/types/Cart.type";
 
 const CartItem = () => {
   const cartContext = useContext(CartContext);
