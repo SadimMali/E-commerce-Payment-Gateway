@@ -3,7 +3,7 @@
 import CartModal from "@/components/cart/CartModal";
 import { useToast } from "@/components/hooks/use-toast";
 import { CartContext } from "@/context/CartContext";
-import type { Cart } from "@/context/CartContext";
+import { Cart } from "@/types/Cart.type";
 import { ProductList } from "@/types/Products.type";
 import { Car, Heart, ShoppingBag, Star } from "lucide-react";
 import Image from "next/image";
@@ -140,6 +140,7 @@ export const ProductDetails = ({
               <Image
                 fill
                 src={filterProduct?.img}
+                priority
                 className="w-full h-full object-contain cursor-pointer transition-shadow"
                 alt=""
               />
@@ -153,6 +154,7 @@ export const ProductDetails = ({
                 <Image
                   fill
                   src={img}
+                  priority
                   className="h-full w-full object-contain cursor-pointer transition-shadow"
                   alt=""
                 />
