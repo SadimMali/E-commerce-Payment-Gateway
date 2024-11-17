@@ -1,16 +1,13 @@
 "use client";
-import { Cart } from "@/context/CartContext";
 import { DeliveryType } from "@/schemas/deliverySchema";
-import axios from "axios";
+import { ApiResponse } from "@/types/ApiResponse";
+import { Cart } from "@/types/Cart.type";
+import axios, { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "../hooks/use-toast";
 
-interface User {
-  name: string;
-  email: string;
-  phonenumber: string;
-}
 interface Price {
   totalPrice: number;
   charge: number;
@@ -20,13 +17,13 @@ interface Price {
 interface Props {
   deliveryDetails: DeliveryType;
   price: Price;
-  user: User;
   cart: Array<Cart>;
 }
 
-const KhaltiPayment = ({ deliveryDetails, price, user, cart }: Props) => {
+const KhaltiPayment = ({ deliveryDetails, price, cart }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleKhaltiPayment = async () => {
     setIsLoading(true);
@@ -34,7 +31,6 @@ const KhaltiPayment = ({ deliveryDetails, price, user, cart }: Props) => {
       const response = await axios.post("/api/epayment", {
         deliveryDetails,
         price,
-        user,
         cart,
       });
       console.log("server api", response);
@@ -45,7 +41,15 @@ const KhaltiPayment = ({ deliveryDetails, price, user, cart }: Props) => {
         router.push(data.message.payment_url);
       }
     } catch (err) {
-      console.log(err);
+      console.error("Error payment", err);
+      const axiosError = err as AxiosError<ApiResponse>;
+      toast({
+        title: "Payment failed",
+        description: axiosError.response?.data.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
