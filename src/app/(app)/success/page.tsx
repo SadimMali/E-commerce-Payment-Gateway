@@ -1,10 +1,11 @@
 "use client";
 
 import { useToast } from "@/components/hooks/use-toast";
+import { CartContext } from "@/context/CartContext";
 import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 
 type SuccessPageProps = {
   searchParams: {
@@ -16,16 +17,22 @@ const Page = ({ searchParams }: SuccessPageProps) => {
   const router = useRouter();
   const { toast } = useToast();
 
-  const { pidx, transaction_id, purchase_order_id } = searchParams;
+  const cartContext = useContext(CartContext);
+
+  const { pidx, transaction_id, purchase_order_id, status } = searchParams;
 
   useEffect(() => {
+    if (!cartContext || !cartContext.setCart) {
+      return;
+    }
     const updateOrderConfirmation = async () => {
       try {
         const response = await axios.post<ApiResponse>(
           "/api/epayment/confirm",
-          { pidx, transaction_id, purchase_order_id }
+          { pidx, transaction_id, purchase_order_id, status }
         );
         if (response.data.success) {
+          cartContext.setCart([]);
           toast({
             title: "Payment confirmed",
             description: "Order updated successfully",

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const { pidx, transaction_id, purchase_order_id } = await req.json();
+  const { pidx, transaction_id, purchase_order_id, status } = await req.json();
 
   const decodedOrderId = decodeURIComponent(purchase_order_id);
   const decodedPaymentId = decodeURIComponent(pidx);
@@ -11,6 +11,7 @@ export async function POST(req: Request) {
         id: decodedPaymentId,
       },
       data: {
+        status,  
         transactionId: transaction_id,
       },
     });
