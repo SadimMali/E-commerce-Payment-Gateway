@@ -28,8 +28,7 @@ export const ProductDetails = ({
     return <div>Loading...</div>;
   }
 
-  const {cart, setCart } = cartContext;
-
+  const { cart, setCart } = cartContext;
 
   if (!filterProduct) return notFound();
 
@@ -169,8 +168,8 @@ export const ProductDetails = ({
             >
               <ShoppingBag className="w-4 h-4" /> Add to cart
             </button>
-            <button className="w-1/12 py-1 rounded-md bg-gray-200 flex items-center justify-center hover:opacity-70">
-              <Heart className="w-4 h-4 border-black-1 hover:opacity-70" />
+            <button className="w-1/12 py-1 rounded-md bg-gray-200 flex items-center justify-center hover:opacity-70 group">
+              <Heart className="w-4 h-4 border-black-1 hover:opacity-70 group-hover:fill-red-500 group-hover:text-red-500 group-hover:animate-pulse transition-colors duration-300" />
             </button>
           </div>
           <p className="font-bold text-sm flex gap-2 items-center">
