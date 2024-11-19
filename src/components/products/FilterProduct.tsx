@@ -8,10 +8,16 @@ const FilterProduct = () => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const router = useRouter();
+  
   //fn to set searchParams based on the argument passed
   const updateSearchParams = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value);
+    if(key === 'category') {
+      params.set(key, value);
+      params.delete("page")
+    } else {
+      params.set(key, value);
+    }
     router.push(`${window.location.pathname}?${params.toString()}`);
   };
 
