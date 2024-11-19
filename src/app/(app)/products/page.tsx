@@ -1,6 +1,8 @@
+import { AppPagination } from "@/components/AppPagination";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import FilterProduct from "@/components/products/FilterProduct";
 import { prisma } from "@/lib/prisma";
+import { ITEM_PER_PAGE } from "@/lib/setting";
 import { Prisma } from "@prisma/client";
 import dynamic from "next/dynamic";
 
@@ -15,7 +17,9 @@ const CategoriesProduct = dynamic(
 
 type SearchParams = { [key: string]: string | undefined };
 const Page = async ({ searchParams }: { searchParams: SearchParams }) => {
-  const { category } = searchParams;
+  const { page, category } = searchParams;
+
+  const p = page ? parseInt(page) : 1;
 
   //Filter the products based on category or subCategory
   let query: Prisma.ProductWhereInput = {};
@@ -26,14 +30,22 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }) => {
     ];
   }
 
-  //Fetch products
-  const products = await prisma.product.findMany({
-    include: {
-      category: true,
-      subCategory: true,
-    },
-    where: query,
-  });
+  //Fetch products and count no.of products
+
+  const [products, count] = await prisma.$transaction([
+    prisma.product.findMany({
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+      include: {
+        category: true,
+        subCategory: true,
+      },
+      where: query,
+    }),
+    prisma.product.count({
+      where: query,
+    }),
+  ]);
 
   return (
     <main>
@@ -46,6 +58,11 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }) => {
         </p>
         {/* products cards */}
         <CategoriesProduct products={products} />
+
+        {/* pagination */}
+        <div className="py-10">
+        <AppPagination page={p} count={count} />
+        </div>
       </MaxWidthWrapper>
     </main>
   );
