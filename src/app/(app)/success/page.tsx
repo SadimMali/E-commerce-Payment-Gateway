@@ -1,6 +1,7 @@
 "use client";
 
 import { useToast } from "@/components/hooks/use-toast";
+import PaymentConfirmation from "@/components/payment/PaymentConfirmation";
 import { CartContext } from "@/context/CartContext";
 import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
@@ -19,7 +20,8 @@ const Page = ({ searchParams }: SuccessPageProps) => {
 
   const cartContext = useContext(CartContext);
 
-  const { pidx, transaction_id, purchase_order_id, status } = searchParams;
+  const { pidx, transaction_id, purchase_order_id, status, total_amount } =
+    searchParams;
 
   useEffect(() => {
     if (!cartContext || !cartContext.setCart) {
@@ -38,9 +40,6 @@ const Page = ({ searchParams }: SuccessPageProps) => {
             description: "Order updated successfully",
             variant: "default",
           });
-          setTimeout(() => {
-            router.push("/");
-          }, 2000);
         } else {
           throw new Error("Something went wrong");
         }
@@ -56,7 +55,15 @@ const Page = ({ searchParams }: SuccessPageProps) => {
     updateOrderConfirmation();
   }, [searchParams, router, toast]);
 
-  return <div className="">Page</div>;
+  return (
+  <div className="w-full h-[calc(100vh-3.5rem)]">
+      <PaymentConfirmation
+        transactionId={transaction_id!}
+        amount={total_amount!}
+        status={status!}
+      />
+    </div>
+  );
 };
 
 export default Page;
