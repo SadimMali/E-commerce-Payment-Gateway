@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
           if (isPasswordCorrect) {
             return user;
           } else {
-            throw new Error("Incorrect password");
+            throw new Error("Incorrect username / email or password");
           }
         } catch (err: any) {
           throw new Error(err);
