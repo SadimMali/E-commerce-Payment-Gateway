@@ -41,3 +41,43 @@ export async function updateOrder(
     },
   });
 }
+
+//Fetch orders and count no.of orders
+// export async function fetchOrder() {
+//   return prisma.$transaction([
+//     prisma.order.findMany({
+//       include: {
+//         orderItems: {
+//           select: {
+//             totalPrice: true
+//           }
+//         },
+//         delivery: {
+//           select: {
+//             firstName: true,
+//             lastName: true,
+//           },
+//         },
+//         payment: {
+//           select: {
+//             method: true,
+//             status: true,
+//           },
+//         },
+//       },
+//     }),
+//     prisma.order.count(),
+//   ]);
+// }
+export async function fetchOrder() {
+  return prisma.$transaction([
+    prisma.order.findMany({
+      include: {
+        orderItems: true,
+        delivery: true,
+        payment: true,
+      },
+    }),
+    prisma.order.count(),
+  ]);
+}
