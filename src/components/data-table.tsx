@@ -39,6 +39,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   page: number;
   count: number;
+  filterName: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -46,6 +47,7 @@ export function DataTable<TData, TValue>({
   data,
   page,
   count,
+  filterName,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -93,9 +95,15 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter products..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={
+            (table
+              .getColumn(filterName || "name")
+              ?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table
+              .getColumn(filterName)
+              ?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
