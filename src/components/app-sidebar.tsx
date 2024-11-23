@@ -44,13 +44,13 @@ const items = [
   // User-specific items
   {
     title: "My Orders",
-    url: "/orders",
+    url: "/user/orders",
     icon: Logs,
     visible: ["USER"],
   },
   {
     title: "Profile",
-    url: "/profile",
+    url: "/user/profile",
     icon: Users,
     visible: ["USER"],
   },
