@@ -70,7 +70,7 @@ export async function updateOrder(
 //   ]);
 // }
 export async function fetchOrder() {
-  return prisma.$transaction([
+  return await prisma.$transaction([
     prisma.order.findMany({
       include: {
         orderItems: true,
@@ -81,3 +81,4 @@ export async function fetchOrder() {
     prisma.order.count(),
   ]);
 }
+
