@@ -82,3 +82,15 @@ export async function fetchOrder() {
   ]);
 }
 
+export async function fetchOrderByUserId(id: string) {
+  return await prisma.order.findMany({
+    where: {
+      userId: id,
+    },
+    include: {
+      orderItems: true,
+      delivery: true,
+      payment: true,
+    },
+  });
+}
