@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import UserWrapper from "./UserWrapper";
 
 const Page = async () => {
   const [data, count] = await prisma.$transaction([
@@ -11,15 +12,17 @@ const Page = async () => {
         lastName: true,
         role: true,
         number: true,
-        address: true,
         createdAt: true,
       },
     }),
     prisma.user.count(),
   ]);
 
-
-  return <div className="">Page</div>;
+  return (
+    <div className="">
+      <UserWrapper count={count} data={data} page={1} />
+    </div>
+  );
 };
 
 export default Page;
