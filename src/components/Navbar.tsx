@@ -1,23 +1,30 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MaxWidthWraper from "./MaxWidthWrapper";
 import { Heart, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { CartContext } from "@/context/CartContext";
 import { useSession } from "next-auth/react";
 import { User } from "next-auth";
+import { Cart } from "@/types/Cart.type";
 
 const Navbar = () => {
   const { data: session, status } = useSession(); // Get both session data and status
+  const [userCart, setUserCart] = useState<Array<Cart>>([]);
   const user: User = session?.user;
 
   const cartContext = useContext(CartContext);
-  if (!cartContext) {
-    return <div>Loading cart...</div>;
-  }
 
-  const { cart } = cartContext;
-  const quantity = cart.reduce((acc, element) => {
+  //filter cart of an user if product exists in cart and user is authenticated
+  useEffect(() => {
+    if (cartContext && user?.id) {
+      const filteredCart = cartContext.cart.filter((c) => c.userId === user.id);
+      setUserCart(filteredCart);
+    } 
+  }, [cartContext, user]);
+
+
+  const quantity = userCart.reduce((acc, element) => {
     return acc + element.quantity;
   }, 0);
 
@@ -55,7 +62,7 @@ const Navbar = () => {
             <Link href="/cart">
               <button className="relative">
                 <ShoppingCart className="h-6 w-6" />
-                {cart.length > 0 && (
+                {userCart.length > 0 && (
                   <span className="absolute flex items-center justify-center text-xs font-semibold w-4 h-4 p-2 border-2 rounded-full border-red-600 bg-red-600 text-white -right-4 -top-3">
                     {quantity}
                   </span>
