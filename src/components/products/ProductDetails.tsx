@@ -6,8 +6,9 @@ import { CartContext } from "@/context/CartContext";
 import { Cart } from "@/types/Cart.type";
 import { ProductList } from "@/types/Products.type";
 import { Car, Heart, ShoppingBag, Star } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 
 export const ProductDetails = ({
@@ -22,6 +23,11 @@ export const ProductDetails = ({
   const [image, setImage] = useState(filterProduct?.img);
 
   const cartContext = useContext(CartContext);
+
+  const router = useRouter();
+
+  const { data: session } = useSession();
+  const user = session?.user;
 
   if (!cartContext) {
     // Handle the case when cartContext is null
@@ -39,6 +45,17 @@ export const ProductDetails = ({
   const handleAddCart = () => {
     if (!filterProduct) return;
 
+    if (!user) {
+      router.push("/sign-in");
+      toast({
+        title: "Login required",
+        description:
+          "You need to log in to add items to your cart. Please sign in.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setCart((prevCart) => {
       const existingItemIndex = prevCart.findIndex(
         (item) => item.id === filterProduct.id
@@ -48,14 +65,18 @@ export const ProductDetails = ({
         // If item exists, update the quantity
         const updatedCart = prevCart.map((item, index) =>
           index === existingItemIndex
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + 1, userId: user?.id || null }
             : item
         );
         console.log("updated", updatedCart);
         return updatedCart;
       } else {
         // Add product to cart with a default quantity of 1
-        const newCartItem: Cart = { ...filterProduct, quantity: 1 };
+        const newCartItem: Cart = {
+          ...filterProduct,
+          quantity: 1,
+          userId: user?.id || null,
+        };
         return [...prevCart, newCartItem];
       }
     });
