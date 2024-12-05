@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import axios, { AxiosError } from "axios";
-import { DataTable } from "./data-table";
+import { DataTable } from "../../../../components/data-table";
 import { ApiResponse } from "@/types/ApiResponse";
 import { useToast } from "@/components/hooks/use-toast";
 
@@ -66,6 +66,7 @@ const Page = ({
         columns={columns}
         data={transformedProducts}
         page={p}
+        filterName="name"
         count={parseInt(productData?.count)}
       />
     </div>
