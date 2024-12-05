@@ -1,19 +1,35 @@
 "use client";
 import CartItemCard from "@/components/cart/CartItemCard";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/context/CartContext";
 import { useToast } from "../hooks/use-toast";
 import { calculatePrice } from "@/utils/calculatePrice";
 import { Cart } from "@/types/Cart.type";
+import { useSession } from "next-auth/react";
 
 const CartItem = () => {
   const cartContext = useContext(CartContext);
+
+  const [userCart, setUserCart] = useState<Array<Cart>>([]);
+
   const { toast } = useToast();
+
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (cartContext && session?.user) {
+      setUserCart(
+        cartContext.cart.filter((cart) => cart.userId === session.user.id)
+      );
+    }
+  }, [cartContext, session?.user]);
+
   if (!cartContext) {
     // Handle the case when cartContext is null
     return <div>Loading...</div>;
   }
   const { cart, setCart } = cartContext;
+
   const onRemoveCart = (id: string) => {
     setCart((item) => item.filter((prev) => prev.id !== id));
     toast({
@@ -35,8 +51,8 @@ const CartItem = () => {
       </div>
 
       <div className="flex flex-col gap-4 ">
-        {cart.length > 0 ? (
-          cart.map((c: Cart) => (
+        {userCart.length > 0 && session?.user ? (
+          userCart.map((c: Cart) => (
             <CartItemCard item={c} key={c.id} onRemoveCart={onRemoveCart} />
           ))
         ) : (
