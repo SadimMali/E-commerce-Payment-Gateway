@@ -201,7 +201,7 @@ export function UserProfile({ user }: { user: UserFormValues }) {
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
                     <FormControl>
-                      <Input {...field} type="tel" />
+                      <Input {...field} type="tel" maxLength={10} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
