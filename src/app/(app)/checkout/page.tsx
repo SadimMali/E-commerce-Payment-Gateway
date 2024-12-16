@@ -24,6 +24,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CartContext } from "@/context/CartContext";
 import { DeliveryType } from "@/schemas/deliverySchema";
 import { calculatePrice } from "@/utils/calculatePrice";
+import { cn } from "@/lib/utils";
 
 //Dynamic imports
 const Delivery = dynamic(() => import("@/components/checkout/Delivery"), {
@@ -104,6 +105,8 @@ const Page = () => {
     phonenumber: "9749497621",
   };
 
+  const boo = true;
+
   return (
     <div>
       <MaxWidthWrapper>
@@ -126,7 +129,7 @@ const Page = () => {
               />
             </div>
             <div className="flex w-full gap-2 items-center justify-between">
-              <h2 className="text-xl my-2 font-medium">Payment</h2>
+              <h2 className={cn('text-xl my-2 font-medium',{  'opacity-35' : !isDeliveryPreview } )}>Payment</h2>
               {/* EDIT BUTTON */}
               {isPaymentPreview && isDeliveryPreview && (
                 <div className="mr-2">
