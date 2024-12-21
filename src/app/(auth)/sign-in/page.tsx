@@ -53,9 +53,9 @@ const LoginPage = () => {
       setIsSubmitting(false);
       toast({
         title: "Login successfully",
-        description: "Redirecting to dashboard",
+        description: "You have successfully logged in",
       });
-      router.replace("/dashboard");
+      router.replace("/");
     }
   };
 
