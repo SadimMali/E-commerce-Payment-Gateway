@@ -20,7 +20,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-background border-t">
+    <footer className="bg-background border-t mt-10">
       <div className="container px-6 py-12 mx-auto">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {/* Company Info */}
@@ -164,7 +164,7 @@ export function Footer() {
         {/* Bottom Section */}
         <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Your Company. All rights reserved.
+            © {new Date().getFullYear()} XYZ. All rights reserved.
           </p>
           <div className="flex items-center space-x-4">
             <Link
