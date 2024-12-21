@@ -91,21 +91,12 @@ const Page = () => {
   if (!cartContext) return;
 
   // Redirect to page incase no product in the cart
-  // if (cartContext.cart.length === 0) {
-  //   router.push("/cart");
-  // }
+  if (cartContext.cart.length === 0) {
+    router.push("/cart");
+  }
 
   const price = calculatePrice(0, cartContext.cart);
-
-  // TODO:Mocked user data (to be replaced with actual user data )
-
-  const user = {
-    name: "Sadim Mali",
-    email: "sadimmalakar77@gmail.com",
-    phonenumber: "9749497621",
-  };
-
-  const boo = true;
+ 
 
   return (
     <div>
@@ -129,7 +120,13 @@ const Page = () => {
               />
             </div>
             <div className="flex w-full gap-2 items-center justify-between">
-              <h2 className={cn('text-xl my-2 font-medium',{  'opacity-35' : !isDeliveryPreview } )}>Payment</h2>
+              <h2
+                className={cn("text-xl my-2 font-medium", {
+                  "opacity-35": !isDeliveryPreview,
+                })}
+              >
+                Payment
+              </h2>
               {/* EDIT BUTTON */}
               {isPaymentPreview && isDeliveryPreview && (
                 <div className="mr-2">
@@ -218,28 +215,46 @@ const Page = () => {
 
           {/* order summary */}
           <div className=" md:w-1/3">
-            <div className="mb-10">
-              <h4 className="text-xl font-semibold">In Your Bag</h4>
+            <div>
+              <div className="mb-10">
+                <h4 className="text-xl font-semibold">In Your Bag</h4>
+              </div>
+
+              <div className="flex w-full items-center justify-between mt-2">
+                <span className="font-semibold">Subtotal</span>
+                {price.subTotalPrice ? (
+                  <span>Rs {price.subTotalPrice}</span>
+                ) : (
+                  "-"
+                )}
+              </div>
+              <div className="flex w-full items-center justify-between mt-2">
+                <span className="font-semibold">Estimated Shipping</span>
+                {price.charge ? <span>Rs {price.charge}</span> : "0"}
+              </div>
+              <div className="w-full border px-2 mt-3" />
+              <div className="flex w-full items-center justify-between mt-2">
+                <span className="font-semibold">Total</span>
+                {price.totalPrice ? <span>Rs {price.totalPrice}</span> : "-"}
+              </div>
+              <div className="w-full border mt-2" />
             </div>
 
-            <div className="flex w-full items-center justify-between mt-2">
-              <span className="font-semibold">Subtotal</span>
-              {price.subTotalPrice ? (
-                <span>Rs {price.subTotalPrice}</span>
-              ) : (
-                "-"
-              )}
+            <div className=" mt-5">
+              {
+               cartContext.cart.map((item)=> (
+                <div key={item.id} className="flex gap-2 items-center ">
+                  <Image src={item.img} width={60} height={60} alt='' />
+                  <div className="flex flex-col gap-2 text-sm font-semibold">
+                    <span>{item.name}</span>
+                    <p > Quantity: {item.quantity}</p>
+                  </div>
+                </div>
+               ))
+              }
+              <div></div>
+              <div></div>
             </div>
-            <div className="flex w-full items-center justify-between mt-2">
-              <span className="font-semibold">Estimated Shipping</span>
-              {price.charge ? <span>Rs {price.charge}</span> : "0"}
-            </div>
-            <div className="w-full border px-2 mt-3" />
-            <div className="flex w-full items-center justify-between mt-2">
-              <span className="font-semibold">Total</span>
-              {price.totalPrice ? <span>Rs {price.totalPrice}</span> : "-"}
-            </div>
-            <div className="w-full border mt-2" />
           </div>
         </div>
       </MaxWidthWrapper>
