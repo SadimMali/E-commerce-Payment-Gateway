@@ -91,9 +91,9 @@ export const ProductDetails = ({
     <div>
       <div className="flex flex-col-reverse md:flex-row py-2">
         {/* img */}
-        <div className="w-full ">
+        <div className="w-full h-full">
           <div className="flex justify-center items-center bg-gray-100 w-full h-full">
-            <div className="relative w-56 md:w-80  min-h-[200px] h-full">
+            <div className="relative w-56 md:w-80  min-h-[350px] h-full">
               <Image
                 className="object-cover"
                 src={image}
@@ -104,7 +104,7 @@ export const ProductDetails = ({
             </div>
           </div>
           {/* description */}
-          <div className="p-5">
+          <div className="p-5 h-full">
             <h3 className="text-2xl font-bold mb-3">Details</h3>
             <div>
               <p className="font-medium text-sm lg:text-base mb-2">
@@ -133,17 +133,7 @@ export const ProductDetails = ({
           <p className="font-semibold text-md text-gray-400">
             {filterProduct?.subCategory.name}
           </p>
-          <p className="flex items-center text-sm text-gray-500 gap-3">
-            <span className="flex">
-              {Array.from({ length: 5 }).map((_, ex) => (
-                <Star
-                  key={ex}
-                  className="w-4 h-4 fill-[#edcf5d] text-[#edcf5d]"
-                />
-              ))}
-            </span>
-            43 reviews
-          </p>
+      
           <span className="font-bold text-2xl py-8">
             Rs {filterProduct?.price}
           </span>
