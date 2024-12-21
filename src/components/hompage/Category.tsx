@@ -10,7 +10,7 @@ const Category = () => {
       { name: "Short", image: "/product/shorts.jpg", count: 180 },
     ]
   return (
-    <section className="py-16 container ">
+    <section className="py-16  ">
     <div className="text-center mb-10">
       <h2 className="text-3xl font-bold mb-4">Shop by Category</h2>
       <p className="text-muted-foreground">Browse our wide selection of products by category</p>
