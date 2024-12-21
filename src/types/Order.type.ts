@@ -1,5 +1,5 @@
-import { Delivery, Order, OrderItem, Payment } from "@prisma/client";
+import { Delivery, Order, OrderItem, Payment, Product } from "@prisma/client";
 
 export type OrderList = Order & { payment: Payment | null } & {
   delivery: Delivery | null;
-} & { orderItems: OrderItem[] | null };
+} & { orderItems: (OrderItem & { product: Product })[] };
