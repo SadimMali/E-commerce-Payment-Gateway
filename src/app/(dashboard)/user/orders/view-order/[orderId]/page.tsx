@@ -21,11 +21,16 @@ const Page = async ({
       id: orderId,
     },
     include: {
-      orderItems: true,
+      orderItems: {
+        include: {
+          product: true,
+        },
+      },
       delivery: true,
       payment: true,
     },
   });
+
   return (
     <div className="">
       <ViewOrder order={order} />
