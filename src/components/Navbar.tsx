@@ -177,7 +177,7 @@ const Navbar = () => {
   return (
     <nav className="sticky z-20 inset-x-0 w-full top-0 h-14 border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
       <MaxWidthWraper>
-        <div className="h-14 flex items-center justify-between">
+        <div className="h-14 flex items-center justify-between px-5">
           <div className="flex items-center justify-between gap-5 md:gap-16 text-sm md:txt-lg">
             <div className="flex items-center gap-4">
               <MobileNav />
@@ -215,7 +215,7 @@ const Navbar = () => {
 
             {/* <div className="hidden md:block"> */}
               {user ? (
-                <Link href="/user">{user.username || "user"} ✨</Link>
+                <Link href={`/${user.role?.toLocaleString().toLocaleLowerCase()}`}>{user.username || "user"} ✨</Link>
               ) : (
                 <div className="flex space-x-5 items-center text-sm lg:text-[1rem] xl:text-base justify-between h-full">
                   <Link href="/sign-up">
