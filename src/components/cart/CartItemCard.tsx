@@ -1,4 +1,5 @@
-import { CartContext, type Cart } from "@/context/CartContext";
+import { CartContext } from "@/context/CartContext";
+import { Cart } from "@/types/Cart.type";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useContext } from "react";
