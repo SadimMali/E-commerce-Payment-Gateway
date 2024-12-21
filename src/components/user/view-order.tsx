@@ -71,6 +71,7 @@ export default function ViewOrder({ order }: { order: OrderList | null }) {
           <TableHeader>
             <TableRow>
               <TableHead>Product ID</TableHead>
+              <TableHead>Product Image</TableHead>
               <TableHead>Quantity</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Subtotal</TableHead>
@@ -80,6 +81,14 @@ export default function ViewOrder({ order }: { order: OrderList | null }) {
             {order?.orderItems?.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.productId}</TableCell>
+                <TableCell>
+                  <Image 
+                  src={item.product.img}
+                  width={50}
+                  height={50}
+                  alt=""
+                  />
+                  </TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>NPR {item.totalPrice.toFixed(2)}</TableCell>
                 <TableCell>
