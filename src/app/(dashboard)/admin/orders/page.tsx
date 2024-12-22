@@ -1,23 +1,16 @@
-import { DataTable } from "@/components/data-table";
 import { fetchOrder } from "@/services/orderService";
-import { columns } from "./columns";
 import OrderWrapper from "./OrderWrapper";
 
 export type Order = {
   id: string;
   customer: string | undefined;
-  status: string;
+  status: string; 
   price: number;
   orderDate: Date;
 };
 
-const Page = async ({
-  searchParams,
-}: {
-  [key: string]: string | undefined;
-}) => {
+const Page = async () => {
   const data = await fetchOrder();
-  console.log(searchParams);
   const [order, count] = data;
   const p = 1;
 

@@ -59,7 +59,6 @@ export function AppPagination({
           }
         )}
         <PaginationItem>
-          <PaginationEllipsis />
         </PaginationItem>
         <PaginationItem
           className={

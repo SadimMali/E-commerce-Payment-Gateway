@@ -88,7 +88,11 @@ export async function fetchOrderByUserId(id: string) {
       userId: id,
     },
     include: {
-      orderItems: true,
+      orderItems: {
+        include: {
+          product: true,
+        },
+      },
       delivery: true,
       payment: true,
     },

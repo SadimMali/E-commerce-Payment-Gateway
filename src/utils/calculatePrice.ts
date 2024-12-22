@@ -1,4 +1,4 @@
-import type { Cart } from "@/context/CartContext";
+import { Cart } from "@/types/Cart.type";
 
 export function calculatePrice(ch: number, cart: Array<Cart>) {
     // let  totalPrice = tp;
